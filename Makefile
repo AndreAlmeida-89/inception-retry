@@ -54,6 +54,9 @@ clean_data:
 	@rm -rf $(WP_PATH)/*
 	@echo "Cleaning mariadb data..."
 	@rm -rf $(DB_PATH)/*
+	# Cleaning SSL certificate
+	@echo "Cleaning SSL certificate..."
+	@rm -f $(CRT_PATH) $(KEY_PATH)
 
 gen_ssl_cert:
 	@echo "Generating SSL certificate..."
