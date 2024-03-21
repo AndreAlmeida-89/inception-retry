@@ -1,9 +1,16 @@
 name = inception
-all: create_data
+DATA_PATH = $(HOME)/data
+DB_PATH = $(DATA_PATH)/mariadb
+WP_PATH = $(DATA_PATH)/wordpress
+SSL_PATH = ./srcs/requirements/nginx/tools
+CRT_PATH = $(SSL_PATH)/localhost.crt
+KEY_PATH = $(SSL_PATH)/localhost.key
+
+all: create_data gen_ssl_cert
 	@printf "Launch configuration ${name}...\n"
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d
 
-build: create_data
+build: create_data gen_ssl_cert
 	@printf "Building configuration ${name}...\n"
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d --build
 
@@ -32,24 +39,26 @@ fclean: clean_data
 # Check if ~/data/wordpress and ~/data/mariadb exist
 # if not, create them
 create_data:
-	@echo "Checking if ~/data/wordpress exists..."
-	@if [ ! -d ~/data/wordpress ]; then \
-		echo "Creating ~/data/wordpress..."; \
-		mkdir -p ~/data/wordpress; \
+	@echo "Checking if wordpress data exists..."
+	@if [ ! -d $(WP_PATH) ]; then \
+		mkdir -p $(WP_PATH); \
 	fi
-	@echo "Checking if ~/data/mariadb exists..."
-	@if [ ! -d ~/data/mariadb ]; then \
-		echo "Creating ~/data/mariadb..."; \
-		mkdir -p ~/data/mariadb; \
+	@echo "Checking if mariadb data exists..."
+	@if [ ! -d $(DB_PATH) ]; then \
+		mkdir -p $(DB_PATH); \
 	fi
 
 clean_data:
-	@echo "Cleaning ~/data/wordpress..."
-	@sudo rm -rf ~/data/wordpress/*
-	@echo "Cleaning ~/data/mariadb..."
-	@sudo rm -rf ~/data/mariadb/*
-	@docker volume rm $(docker volume ls -q)
+	# Cleaning data folders content
+	@echo "Cleaning wordpress data..."
+	@rm -rf $(WP_PATH)/*
+	@echo "Cleaning mariadb data..."
+	@rm -rf $(DB_PATH)/*
 
-#ma
+gen_ssl_cert:
+	@echo "Generating SSL certificate..."
+	@if [ ! -f $(CRT_PATH) ] || [ ! -f $(KEY_PATH) ]; then \
+		openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $(KEY_PATH) -out $(CRT_PATH) -subj "/C=FR/ST=Paris/L=Paris/O=42/OU=42/CN=localhost"; \
+	fi
 
 .PHONY	: all build down re clean fclean
