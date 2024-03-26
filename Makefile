@@ -25,8 +25,8 @@ re:
 clean: down
 	@printf "Cleaning configuration ${NAME}...\n"
 	@docker system prune -a
-	@sudo rm -rf ./data/wordpress/*
-	@sudo rm -rf ./data/mariadb/*
+	@sudo rm -rf ${HOME}/data/mariadb/*
+	@sudo rm -rf ${HOME}/data/wordpress/*
 
 
 #Be careful! Fclean removes all Docker images that are on the machine!
@@ -36,7 +36,7 @@ fclean:
 	@docker system prune --all --force --volumes
 	@docker network prune --force
 	@docker volume prune --force
-	@sudo rm -rf ./data/wordpress/*
-	@sudo rm -rf ./data/mariadb/*
+	@sudo rm -rf ${HOME}/data/mariadb/*
+	@sudo rm -rf ${HOME}/data/wordpress/*
 
 .PHONY	: all build down re clean fclean

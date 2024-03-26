@@ -3,11 +3,11 @@
 #create folders for volumes if they don't exist
 
 #check if the folder exists
-if [ ! -d "data/mariadb" ]; then
-	mkdir -p data/mariadb
+if [ ! -d "${HOME}/data/mariadb" ]; then
+	mkdir -p ${HOME}/data/mariadb
 fi
 
 #check if the folder exists
-if [ ! -d "data/wordpress" ]; then
-	mkdir -p data/wordpress
+if [ ! -d "${HOME}data/wordpress" ]; then
+	mkdir -p ${HOME}/data/mariadb
 fi
