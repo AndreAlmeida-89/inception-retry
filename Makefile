@@ -36,6 +36,7 @@ fclean:
 	@docker system prune --all --force --volumes
 	@docker network prune --force
 	@docker volume prune --force
+	@docker rm -f $(docker ps -a -q)
 	@sudo rm -rf ${HOME}/data/mariadb/*
 	@sudo rm -rf ${HOME}/data/wordpress/*
 
