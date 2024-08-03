@@ -1,4 +1,4 @@
-version: "3"
+# version: "3"
 
 services:
   mariadb:
@@ -51,6 +51,55 @@ services:
       - inception
     volumes:
       - wp-volume:/var/www/
+    restart: always
+
+  ftp:
+    build:
+      context: .
+      dockerfile: requirements/bonus/ftp/Dockerfile
+      args:
+        FTP_USR: ${FTP_USR}
+        FTP_PWD: ${FTP_PWD}
+    container_name: ftp
+    depends_on:
+      - wordpress
+    ports:
+      - "21:21"
+    volumes:
+      - wp-volume:/var/www/
+    networks:
+     - inception
+    restart: always
+
+  adminer:
+    build: ./requirements/bonus/adminer/.
+    container_name: adminer
+    depends_on:
+      - mariadb
+    ports:
+      - "8080:8080"
+    networks:
+     - inception
+    restart: always
+
+  redis:
+    build: requirements/bonus/redis/.
+    container_name: redis
+    depends_on:
+      - wordpress
+    ports:
+      - "6379:6379"
+    networks:
+      - inception
+    restart: always
+
+  website:
+    build:
+      context: .
+      dockerfile: requirements/bonus/website/Dockerfile
+    container_name: website
+    ports:
+      - "80:80"
     restart: always
 
 volumes:
